@@ -8,6 +8,7 @@ const lightboxClose = document.querySelector(".lightbox-close");
 const lightboxPrev = document.querySelector(".lightbox-prev");
 const lightboxNext = document.querySelector(".lightbox-next");
 const introVideo = document.querySelector(".intro-video");
+const introScrubLayer = document.querySelector(".intro-scrub-layer");
 const galleryImages = [
   "gallery-1.jpg",
   "gallery-2.jpg",
@@ -24,6 +25,7 @@ let isIntroComplete = false;
 let introAutoPlayTimer = 0;
 let introAutoPlayFrame = 0;
 let introAutoPlayStartedAt = 0;
+let introVideoReady = false;
 
 function setMusicState(isPlaying) {
   toggle.classList.toggle("is-playing", isPlaying);
@@ -151,7 +153,7 @@ function stopIntroAutoPlay() {
 }
 
 function runIntroAutoPlay(timestamp) {
-  if (!introVideo || isIntroComplete) {
+  if (!introVideo || !introVideoReady || isIntroComplete) {
     stopIntroAutoPlay();
     return;
   }
@@ -169,7 +171,7 @@ function runIntroAutoPlay(timestamp) {
 }
 
 function startIntroAutoPlay() {
-  if (!introVideo || isIntroComplete || introAutoPlayFrame) return;
+  if (!introVideo || !introVideoReady || isIntroComplete || introAutoPlayFrame) return;
   introAutoPlayStartedAt = 0;
   introAutoPlayFrame = requestAnimationFrame(runIntroAutoPlay);
 }
@@ -191,13 +193,27 @@ function advanceIntroVideo(delta) {
   return true;
 }
 
+function getTouchY(event) {
+  return event.touches?.[0]?.clientY ?? event.changedTouches?.[0]?.clientY ?? touchStartY;
+}
+
+function initializeIntroVideo() {
+  if (!introVideo || introVideoReady) return;
+  introVideoReady = true;
+  introVideo.pause();
+  setIntroVideoProgress(0);
+  introAutoPlayTimer = window.setTimeout(startIntroAutoPlay, 1000);
+}
+
 if (introVideo) {
   introVideo.addEventListener("loadedmetadata", () => {
-    introVideo.pause();
-    setIntroVideoProgress(0);
-    introAutoPlayTimer = window.setTimeout(startIntroAutoPlay, 1000);
+    initializeIntroVideo();
   });
-  introVideo.addEventListener("canplay", () => setIntroVideoProgress(introProgress));
+  introVideo.addEventListener("durationchange", initializeIntroVideo);
+  introVideo.addEventListener("canplay", () => {
+    initializeIntroVideo();
+    setIntroVideoProgress(introProgress);
+  });
 
   window.addEventListener("wheel", (event) => {
     if (advanceIntroVideo(event.deltaY)) {
@@ -205,12 +221,29 @@ if (introVideo) {
     }
   }, { passive: false });
 
-  window.addEventListener("touchstart", (event) => {
-    touchStartY = event.touches[0]?.clientY || 0;
+  const handleTouchStart = (event) => {
+    touchStartY = getTouchY(event);
+  };
+
+  const handleTouchMove = (event) => {
+    const currentY = getTouchY(event);
+    const delta = touchStartY - currentY;
+
+    if (advanceIntroVideo(delta)) {
+      event.preventDefault();
+      touchStartY = currentY;
+    }
+  };
+
+  window.addEventListener("touchstart", handleTouchStart, { passive: true });
+  window.addEventListener("touchmove", handleTouchMove, { passive: false });
+
+  introScrubLayer?.addEventListener("touchstart", (event) => {
+    touchStartY = getTouchY(event);
   }, { passive: true });
 
-  window.addEventListener("touchmove", (event) => {
-    const currentY = event.touches[0]?.clientY || touchStartY;
+  introScrubLayer?.addEventListener("touchmove", (event) => {
+    const currentY = getTouchY(event);
     const delta = touchStartY - currentY;
 
     if (advanceIntroVideo(delta)) {
@@ -226,5 +259,9 @@ if (introVideo) {
   }, { passive: true });
 
   window.addEventListener("resize", requestIntroVideoFrame);
+  introVideo.load();
+  if (introVideo.readyState >= 1) {
+    initializeIntroVideo();
+  }
   requestIntroVideoFrame();
 }
