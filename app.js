@@ -59,6 +59,14 @@ const startOnFirstGesture = (event) => {
 window.addEventListener("pointerdown", startOnFirstGesture, { once: true });
 window.addEventListener("touchstart", startOnFirstGesture, { once: true });
 window.addEventListener("scroll", startOnFirstGesture, { once: true });
+window.addEventListener("load", playMusic);
+window.addEventListener("pageshow", playMusic);
+document.addEventListener("WeixinJSBridgeReady", playMusic);
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden) {
+    playMusic();
+  }
+});
 playMusic();
 
 mapHotspots.forEach((hotspot) => {
