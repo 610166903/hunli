@@ -67,9 +67,20 @@ body.intro-complete .intro-scrub-layer {
   left: 50%;
   top: 23.85%;
   width: min(28%, 120px);
-  height: auto;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
   transform: translateX(-50%);
   pointer-events: none;
+}
+
+.scroll-hint img {
+  position: absolute;
+  left: 50%;
+  bottom: -6%;
+  display: block;
+  width: 100%;
+  height: auto;
+  transform: translateX(-50%);
 }
 
 body.intro-complete .scroll-hint {
