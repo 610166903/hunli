@@ -13,14 +13,6 @@ body.lightbox-open {
   overflow: hidden;
 }
 
-body:not(.intro-complete) {
-  overflow: hidden;
-}
-
-body.intro-complete {
-  overflow: auto;
-}
-
 .page {
   width: min(100%, 430px);
   min-height: 100vh;
