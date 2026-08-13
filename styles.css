@@ -52,12 +52,13 @@ body.lightbox-open {
   top: 0;
   width: 100%;
   aspect-ratio: 834 / 1112;
-  pointer-events: auto;
-  touch-action: none;
+  pointer-events: none;
+  touch-action: auto;
 }
 
-body.intro-complete .intro-scrub-layer {
-  pointer-events: none;
+body.intro-ready:not(.intro-complete) .intro-scrub-layer {
+  pointer-events: auto;
+  touch-action: none;
 }
 
 .album-slider {
