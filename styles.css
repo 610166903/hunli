@@ -166,14 +166,21 @@ body.intro-complete .intro-scrub-layer {
   position: absolute;
   z-index: 5;
   display: block;
-  left: 23%;
   top: 73.15%;
-  width: 54%;
+  width: 24.5%;
   height: 1.35%;
   border-radius: 999px;
   cursor: pointer;
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
+}
+
+.map-hotspot-baidu {
+  left: 23.1%;
+}
+
+.map-hotspot-amap {
+  left: 51.8%;
 }
 
 .phone-hotspot {
