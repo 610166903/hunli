@@ -129,12 +129,19 @@ if (introVideo) {
   introVideo.muted = true;
   introVideo.playsInline = true;
   introVideo.autoplay = true;
-  introVideo.loop = true;
+  introVideo.loop = false;
   introVideo.playbackRate = 1;
 
   const playIntroVideo = () => {
     introVideo.play().catch(() => {});
   };
+
+  introVideo.addEventListener("ended", () => {
+    if (Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
+      introVideo.currentTime = Math.max(introVideo.duration - 0.04, 0);
+    }
+    introVideo.pause();
+  });
 
   introVideo.addEventListener("loadedmetadata", playIntroVideo);
   introVideo.addEventListener("canplay", playIntroVideo);
