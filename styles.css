@@ -45,6 +45,20 @@ body.lightbox-open {
   pointer-events: none;
 }
 
+.intro-scrub-layer {
+  position: absolute;
+  z-index: 6;
+  left: 0;
+  top: 0;
+  width: 100%;
+  aspect-ratio: 834 / 1112;
+  touch-action: none;
+}
+
+body.intro-complete .intro-scrub-layer {
+  pointer-events: none;
+}
+
 .album-slider {
   position: absolute;
   z-index: 4;
