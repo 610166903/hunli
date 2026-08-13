@@ -67,7 +67,7 @@ body.intro-complete .intro-scrub-layer {
   left: 50%;
   top: calc(23.35% - 210px);
   display: block;
-  width: min(17.6%, 78px);
+  width: min(14.08%, 62px);
   height: auto;
   transform: translateX(-50%);
   pointer-events: none;
