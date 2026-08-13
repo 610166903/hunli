@@ -140,7 +140,6 @@ if (introVideo) {
   let introComplete = false;
   let introReady = false;
   let touchStartY = 0;
-  let releaseTimer = 0;
 
   introVideo.muted = true;
   introVideo.playsInline = true;
@@ -154,6 +153,7 @@ if (introVideo) {
     introProgress = Math.min(Math.max(progress, 0), 1);
     introComplete = introProgress >= 1;
     document.body.classList.toggle("intro-complete", introComplete);
+    document.body.classList.toggle("intro-ready", introReady && !introComplete);
 
     const targetTime = introProgress * Math.max(introVideo.duration - 0.04, 0);
     if (Math.abs(introVideo.currentTime - targetTime) > 0.025) {
@@ -161,22 +161,29 @@ if (introVideo) {
     }
 
     if (introComplete) {
-      window.clearTimeout(releaseTimer);
       introVideo.pause();
     }
 
     return true;
   };
 
-  const releaseIntro = () => {
+  const forceReleaseIntro = () => {
     introReady = true;
-    setIntroProgress(1);
+    introComplete = true;
+    document.body.classList.remove("intro-ready");
+    document.body.classList.add("intro-complete");
+
+    if (Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
+      introVideo.currentTime = Math.max(introVideo.duration - 0.04, 0);
+    }
+    introVideo.pause();
   };
 
   const advanceIntro = (delta) => {
-    if (introComplete || window.scrollY > 2) return false;
     if (!introReady) return false;
-    if (delta < 0 && introProgress <= 0) return true;
+    if (window.scrollY > 2) return false;
+    if (introComplete && delta > 0) return false;
+    if (delta < 0 && introProgress <= 0) return false;
 
     const step = delta / Math.max(window.innerHeight * 0.85, 1);
     if (!setIntroProgress(introProgress + step)) return false;
@@ -187,16 +194,18 @@ if (introVideo) {
 
   introVideo.addEventListener("loadedmetadata", () => {
     introReady = true;
+    document.body.classList.add("intro-ready");
     introVideo.pause();
     setIntroProgress(0);
-    releaseTimer = window.setTimeout(releaseIntro, 8000);
   });
+
+  introVideo.addEventListener("error", forceReleaseIntro);
 
   window.setTimeout(() => {
     if (!introReady) {
-      releaseIntro();
+      forceReleaseIntro();
     }
-  }, 2500);
+  }, 4000);
 
   window.addEventListener("wheel", (event) => {
     if (advanceIntro(event.deltaY)) {
@@ -226,7 +235,7 @@ if (introVideo) {
     const currentY = getTouchY(event);
     const delta = touchStartY - currentY;
 
-    if (advanceIntro(delta)) {
+    if (window.scrollY <= 1 && delta < 0 && advanceIntro(delta)) {
       event.preventDefault();
       touchStartY = currentY;
     }
