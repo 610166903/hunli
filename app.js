@@ -1,6 +1,6 @@
 const music = document.querySelector("#bgMusic");
 const toggle = document.querySelector(".music-toggle");
-const mapHotspot = document.querySelector(".map-hotspot");
+const mapHotspots = Array.from(document.querySelectorAll(".map-hotspot"));
 const albumButtons = Array.from(document.querySelectorAll(".album-photo-hit"));
 const lightbox = document.querySelector(".photo-lightbox");
 const lightboxImage = document.querySelector(".lightbox-image");
@@ -61,9 +61,11 @@ window.addEventListener("touchstart", startOnFirstGesture, { once: true });
 window.addEventListener("scroll", startOnFirstGesture, { once: true });
 playMusic();
 
-mapHotspot.addEventListener("click", (event) => {
-  event.preventDefault();
-  window.location.href = mapHotspot.href;
+mapHotspots.forEach((hotspot) => {
+  hotspot.addEventListener("click", (event) => {
+    event.preventDefault();
+    window.location.href = hotspot.href;
+  });
 });
 
 function showPhoto(index) {
