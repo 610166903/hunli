@@ -128,15 +128,20 @@ document.addEventListener("keydown", (event) => {
 if (introVideo) {
   introVideo.muted = true;
   introVideo.playsInline = true;
+  introVideo.autoplay = true;
+  introVideo.loop = true;
   introVideo.playbackRate = 1;
 
   const playIntroVideo = () => {
     introVideo.play().catch(() => {});
   };
 
+  introVideo.addEventListener("loadedmetadata", playIntroVideo);
   introVideo.addEventListener("canplay", playIntroVideo);
   introVideo.addEventListener("loadeddata", playIntroVideo);
   window.addEventListener("pageshow", playIntroVideo);
+  document.addEventListener("visibilitychange", playIntroVideo);
+  document.addEventListener("WeixinJSBridgeReady", playIntroVideo);
   window.addEventListener("touchstart", playIntroVideo, { once: true, passive: true });
   window.addEventListener("pointerdown", playIntroVideo, { once: true });
   introVideo.load();
