@@ -100,8 +100,20 @@ albumButtons.forEach((button) => {
 });
 
 lightboxClose.addEventListener("click", closeLightbox);
-lightboxPrev.addEventListener("click", () => showPhoto(currentPhotoIndex - 1));
-lightboxNext.addEventListener("click", () => showPhoto(currentPhotoIndex + 1));
+lightboxPrev.addEventListener("click", (event) => {
+  event.stopPropagation();
+  showPhoto(currentPhotoIndex - 1);
+});
+lightboxNext.addEventListener("click", (event) => {
+  event.stopPropagation();
+  showPhoto(currentPhotoIndex + 1);
+});
+lightboxImage.addEventListener("click", (event) => {
+  event.stopPropagation();
+  const rect = lightboxImage.getBoundingClientRect();
+  const isLeftSide = event.clientX < rect.left + rect.width / 2;
+  showPhoto(currentPhotoIndex + (isLeftSide ? -1 : 1));
+});
 
 lightbox.addEventListener("click", (event) => {
   if (event.target === lightbox) {
