@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>婚礼邀请函</title>
-    <link rel="stylesheet" href="styles.css?v=20260813-scroll-scrub-v4">
+    <link rel="preload" href="layer-6-mobile.mp4" as="video" type="video/mp4">
+    <link rel="stylesheet" href="styles.css?v=20260813-scroll-scrub-v6">
   </head>
   <body>
     <button class="music-toggle" type="button" aria-label="播放音乐" aria-pressed="false">
@@ -17,12 +18,15 @@
         <video
           class="intro-video"
           src="layer-6-mobile.mp4"
+          poster="layer-6-mobile.mp4.png"
           muted
           playsinline
           webkit-playsinline
           preload="auto"
           aria-label="婚礼邀请函开场动画"
-        ></video>
+        >
+          <source src="layer-6-mobile.mp4" type="video/mp4">
+        </video>
         <div class="intro-scrub-layer" aria-hidden="true"></div>
         <section class="album-slider" aria-label="左右滑动查看相册">
           <div class="album-track">
@@ -61,6 +65,6 @@
       <img class="lightbox-image" src="gallery-1-optimized.jpg" alt="相册照片预览" loading="lazy" decoding="async">
       <button class="lightbox-nav lightbox-next" type="button" aria-label="下一张照片">›</button>
     </div>
-    <script src="app.js?v=20260813-scroll-scrub-v4"></script>
+    <script src="app.js?v=20260813-scroll-scrub-v6"></script>
   </body>
 </html>
