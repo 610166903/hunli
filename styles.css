@@ -1,0 +1,280 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: #f8f1e6;
+}
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
+.page {
+  width: min(100%, 430px);
+  min-height: 100vh;
+  margin: 0 auto;
+  background: #f8f1e6;
+}
+
+.image-wrap {
+  position: relative;
+}
+
+.invitation {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.intro-video {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 834 / 1112;
+  background: #f8f1e6;
+  object-fit: cover;
+  object-position: center top;
+  pointer-events: none;
+}
+
+.album-slider {
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  top: 32.85%;
+  width: 100%;
+  height: 12.4%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+  scrollbar-width: none;
+}
+
+.album-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.album-track {
+  width: max-content;
+  height: 100%;
+  padding-right: 40%;
+  scroll-snap-align: start;
+}
+
+.album-art {
+  position: relative;
+  display: inline-block;
+  height: 128%;
+  width: auto;
+  transform: translateY(-10%);
+}
+
+.album-strip {
+  display: block;
+  width: auto;
+  height: 100%;
+  max-width: none;
+  object-fit: contain;
+  object-position: center top;
+  pointer-events: none;
+  user-select: none;
+}
+
+.album-photo-hit {
+  position: absolute;
+  z-index: 2;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  cursor: zoom-in;
+  touch-action: pan-x;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.album-photo-hit-1 {
+  left: 0.2%;
+  top: 29.5%;
+  width: 14.7%;
+  height: 29.8%;
+}
+
+.album-photo-hit-2 {
+  left: 16.2%;
+  top: 38.2%;
+  width: 14.7%;
+  height: 29.6%;
+  transform: rotate(9deg);
+}
+
+.album-photo-hit-3 {
+  left: 34.4%;
+  top: 35.2%;
+  width: 14.4%;
+  height: 24.8%;
+}
+
+.album-photo-hit-4 {
+  left: 51.3%;
+  top: 25.6%;
+  width: 13.6%;
+  height: 27.7%;
+  transform: rotate(-14deg);
+}
+
+.album-photo-hit-5 {
+  left: 70.9%;
+  top: 36.3%;
+  width: 14.1%;
+  height: 25.8%;
+}
+
+.album-photo-hit-6 {
+  left: 86.8%;
+  top: 29.7%;
+  width: 12.9%;
+  height: 27.3%;
+}
+
+.map-hotspot {
+  position: absolute;
+  z-index: 5;
+  display: block;
+  left: 23%;
+  top: 73.15%;
+  width: 54%;
+  height: 1.35%;
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.phone-hotspot {
+  position: absolute;
+  z-index: 5;
+  display: block;
+  left: 25.5%;
+  width: 46.5%;
+  height: 0.86%;
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.bride-phone {
+  top: 92.5%;
+}
+
+.groom-phone {
+  top: 93.62%;
+}
+
+.music-toggle {
+  position: fixed;
+  z-index: 10;
+  top: 14px;
+  right: max(14px, calc((100vw - 430px) / 2 + 14px));
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 1px solid rgba(124, 65, 43, .2);
+  border-radius: 50%;
+  color: #fff8ef;
+  background: rgba(125, 57, 39, .84);
+  box-shadow: 0 8px 22px rgba(84, 31, 17, .18);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.music-toggle.is-playing {
+  animation: spin 5s linear infinite;
+}
+
+.music-icon {
+  transform: translateY(-1px);
+}
+
+.photo-lightbox {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 54px 18px;
+  background: rgba(38, 23, 18, .78);
+}
+
+.photo-lightbox.is-open {
+  display: flex;
+}
+
+.lightbox-image {
+  display: block;
+  max-width: 92vw;
+  max-height: 82vh;
+  border-radius: 8px;
+  box-shadow: 0 18px 48px rgba(0, 0, 0, .35);
+  background: #fef9ef;
+}
+
+.lightbox-close,
+.lightbox-nav {
+  position: fixed;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: rgba(125, 57, 39, .88);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lightbox-close {
+  top: 18px;
+  right: 18px;
+  width: 42px;
+  height: 42px;
+  font-size: 31px;
+  line-height: 1;
+}
+
+.lightbox-nav {
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 36px;
+  transform: translateY(-50%);
+}
+
+.lightbox-prev {
+  left: 14px;
+}
+
+.lightbox-next {
+  right: 14px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
