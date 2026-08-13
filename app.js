@@ -140,6 +140,7 @@ if (introVideo) {
   let introComplete = false;
   let introReady = false;
   let touchStartY = 0;
+  let pendingDelta = 0;
 
   introVideo.muted = true;
   introVideo.playsInline = true;
@@ -147,13 +148,30 @@ if (introVideo) {
   introVideo.loop = false;
   introVideo.playbackRate = 1;
 
+  const warmIntroVideo = () => {
+    const playPromise = introVideo.play();
+
+    if (playPromise?.then) {
+      playPromise
+        .then(() => {
+          introVideo.pause();
+          if (Number.isFinite(introVideo.duration) && introVideo.duration > 0 && !introReady) {
+            introReady = true;
+            document.body.classList.add("intro-ready");
+            setIntroProgress(Math.max(introProgress, 0.012));
+          }
+        })
+        .catch(() => {});
+    }
+  };
+
   const setIntroProgress = (progress) => {
     if (!Number.isFinite(introVideo.duration) || introVideo.duration <= 0) return false;
 
     introProgress = Math.min(Math.max(progress, 0), 1);
     introComplete = introProgress >= 1;
     document.body.classList.toggle("intro-complete", introComplete);
-    document.body.classList.toggle("intro-ready", introReady && !introComplete);
+    document.body.classList.toggle("intro-ready", introReady);
 
     const targetTime = introProgress * Math.max(introVideo.duration - 0.04, 0);
     if (Math.abs(introVideo.currentTime - targetTime) > 0.025) {
@@ -170,7 +188,7 @@ if (introVideo) {
   const forceReleaseIntro = () => {
     introReady = true;
     introComplete = true;
-    document.body.classList.remove("intro-ready");
+    document.body.classList.add("intro-ready");
     document.body.classList.add("intro-complete");
 
     if (Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
@@ -180,7 +198,10 @@ if (introVideo) {
   };
 
   const advanceIntro = (delta) => {
-    if (!introReady) return false;
+    if (!introReady) {
+      pendingDelta += delta;
+      return true;
+    }
     if (window.scrollY > 2) return false;
     if (introComplete && delta > 0) return false;
     if (delta < 0 && introProgress <= 0) return false;
@@ -196,16 +217,23 @@ if (introVideo) {
     introReady = true;
     document.body.classList.add("intro-ready");
     introVideo.pause();
-    setIntroProgress(0);
+    setIntroProgress(0.012);
+
+    if (pendingDelta > 0) {
+      advanceIntro(pendingDelta);
+    }
+    pendingDelta = 0;
+  });
+
+  introVideo.addEventListener("loadeddata", () => {
+    if (!introReady && Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
+      introReady = true;
+      document.body.classList.add("intro-ready");
+      setIntroProgress(0.012);
+    }
   });
 
   introVideo.addEventListener("error", forceReleaseIntro);
-
-  window.setTimeout(() => {
-    if (!introReady) {
-      forceReleaseIntro();
-    }
-  }, 4000);
 
   window.addEventListener("wheel", (event) => {
     if (advanceIntro(event.deltaY)) {
@@ -215,6 +243,7 @@ if (introVideo) {
 
   introScrubLayer?.addEventListener("touchstart", (event) => {
     touchStartY = getTouchY(event);
+    warmIntroVideo();
   }, { passive: true });
 
   introScrubLayer?.addEventListener("touchmove", (event) => {
@@ -229,6 +258,7 @@ if (introVideo) {
 
   window.addEventListener("touchstart", (event) => {
     touchStartY = getTouchY(event);
+    warmIntroVideo();
   }, { passive: true });
 
   window.addEventListener("touchmove", (event) => {
@@ -242,4 +272,5 @@ if (introVideo) {
   }, { passive: false });
 
   introVideo.load();
+  window.setTimeout(warmIntroVideo, 120);
 }
