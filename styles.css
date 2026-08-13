@@ -65,8 +65,8 @@ body.intro-complete .intro-scrub-layer {
   position: absolute;
   z-index: 5;
   left: 50%;
-  top: min(72vh, 25.8%);
-  width: min(34%, 146px);
+  top: 29.2%;
+  width: min(54%, 232px);
   height: auto;
   transform: translateX(-50%);
   pointer-events: none;
