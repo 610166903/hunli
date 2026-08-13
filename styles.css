@@ -61,6 +61,21 @@ body.intro-complete .intro-scrub-layer {
   touch-action: auto;
 }
 
+.scroll-hint {
+  position: absolute;
+  z-index: 5;
+  left: 50%;
+  top: min(72vh, 25.8%);
+  width: min(34%, 146px);
+  height: auto;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+body.intro-complete .scroll-hint {
+  display: none;
+}
+
 .album-slider {
   position: absolute;
   z-index: 4;
