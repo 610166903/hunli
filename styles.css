@@ -66,21 +66,11 @@ body.intro-complete .intro-scrub-layer {
   z-index: 5;
   left: 50%;
   top: 23.85%;
-  width: min(28%, 120px);
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-.scroll-hint img {
-  position: absolute;
-  left: 50%;
-  bottom: -6%;
   display: block;
-  width: 100%;
+  width: min(22%, 98px);
   height: auto;
   transform: translateX(-50%);
+  pointer-events: none;
 }
 
 body.intro-complete .scroll-hint {
