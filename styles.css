@@ -51,7 +51,7 @@ body.lightbox-open {
   left: 0;
   top: 0;
   width: 100%;
-  aspect-ratio: 834 / 1112;
+  height: 100vh;
   pointer-events: auto;
   touch-action: none;
 }
