@@ -65,7 +65,7 @@ body.intro-complete .intro-scrub-layer {
   position: absolute;
   z-index: 5;
   left: 50%;
-  top: calc(23.35% - 169px);
+  top: calc(23.35% - 139px);
   display: block;
   width: min(12.67%, 56px);
   height: auto;
