@@ -26,6 +26,7 @@ let introAutoPlayTimer = 0;
 let introAutoPlayFrame = 0;
 let introAutoPlayStartedAt = 0;
 let introVideoReady = false;
+const isTouchIntroMode = window.matchMedia?.("(pointer: coarse)")?.matches || navigator.maxTouchPoints > 0;
 
 function setMusicState(isPlaying) {
   toggle.classList.toggle("is-playing", isPlaying);
@@ -154,6 +155,10 @@ function setIntroVideoProgress(progress) {
   }
 }
 
+function completeIntroVideo() {
+  setIntroVideoProgress(1);
+}
+
 function stopIntroAutoPlay() {
   window.clearTimeout(introAutoPlayTimer);
   introAutoPlayTimer = 0;
@@ -184,6 +189,10 @@ function runIntroAutoPlay(timestamp) {
 
 function startIntroAutoPlay() {
   if (!introVideo || !introVideoReady || isIntroComplete || introAutoPlayFrame) return;
+  if (isTouchIntroMode) {
+    playIntroVideoSmooth();
+    return;
+  }
   introAutoPlayStartedAt = 0;
   introAutoPlayFrame = requestAnimationFrame(runIntroAutoPlay);
 }
@@ -199,6 +208,11 @@ function advanceIntroVideo(delta) {
   if (isIntroComplete && delta > 0) return false;
   if (!isIntroComplete && delta < 0 && introProgress <= 0) return true;
 
+  if (isTouchIntroMode) {
+    playIntroVideoSmooth();
+    return !isIntroComplete;
+  }
+
   stopIntroAutoPlay();
   const progressStep = delta / Math.max(window.innerHeight * 1.85, 1);
   setIntroVideoProgress(introProgress + progressStep);
@@ -212,9 +226,29 @@ function getTouchY(event) {
 function initializeIntroVideo() {
   if (!introVideo || introVideoReady) return;
   introVideoReady = true;
-  introVideo.pause();
-  setIntroVideoProgress(0);
+  if (isTouchIntroMode) {
+    introVideo.currentTime = 0;
+  } else {
+    introVideo.pause();
+    setIntroVideoProgress(0);
+  }
   introAutoPlayTimer = window.setTimeout(startIntroAutoPlay, 1000);
+}
+
+async function playIntroVideoSmooth() {
+  if (!introVideo || !introVideoReady || isIntroComplete) return;
+
+  stopIntroAutoPlay();
+  document.body.classList.add("intro-playing");
+  introVideo.playbackRate = 1;
+
+  try {
+    await introVideo.play();
+  } catch {
+    if (!introAutoPlayFrame) {
+      introAutoPlayFrame = requestAnimationFrame(runIntroAutoPlay);
+    }
+  }
 }
 
 if (introVideo) {
@@ -224,7 +258,17 @@ if (introVideo) {
   introVideo.addEventListener("durationchange", initializeIntroVideo);
   introVideo.addEventListener("canplay", () => {
     initializeIntroVideo();
-    setIntroVideoProgress(introProgress);
+    if (!isTouchIntroMode) {
+      setIntroVideoProgress(introProgress);
+    }
+  });
+  introVideo.addEventListener("timeupdate", () => {
+    if (!isTouchIntroMode || !introVideo.duration) return;
+    introProgress = Math.min(introVideo.currentTime / introVideo.duration, 1);
+  });
+  introVideo.addEventListener("ended", () => {
+    document.body.classList.remove("intro-playing");
+    completeIntroVideo();
   });
 
   window.addEventListener("wheel", (event) => {
@@ -252,6 +296,7 @@ if (introVideo) {
 
   introScrubLayer?.addEventListener("touchstart", (event) => {
     touchStartY = getTouchY(event);
+    playIntroVideoSmooth();
   }, { passive: true });
 
   introScrubLayer?.addEventListener("touchmove", (event) => {
