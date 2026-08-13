@@ -138,6 +138,7 @@ document.addEventListener("keydown", (event) => {
 if (introVideo) {
   let introProgress = 0;
   let introComplete = false;
+  let introReady = false;
   let touchStartY = 0;
   let releaseTimer = 0;
 
@@ -148,7 +149,7 @@ if (introVideo) {
   introVideo.playbackRate = 1;
 
   const setIntroProgress = (progress) => {
-    if (!Number.isFinite(introVideo.duration) || introVideo.duration <= 0) return;
+    if (!Number.isFinite(introVideo.duration) || introVideo.duration <= 0) return false;
 
     introProgress = Math.min(Math.max(progress, 0), 1);
     introComplete = introProgress >= 1;
@@ -163,28 +164,39 @@ if (introVideo) {
       window.clearTimeout(releaseTimer);
       introVideo.pause();
     }
+
+    return true;
   };
 
   const releaseIntro = () => {
+    introReady = true;
     setIntroProgress(1);
   };
 
   const advanceIntro = (delta) => {
     if (introComplete || window.scrollY > 2) return false;
+    if (!introReady) return false;
     if (delta < 0 && introProgress <= 0) return true;
 
-    const step = delta / Math.max(window.innerHeight * 1.45, 1);
-    setIntroProgress(introProgress + step);
+    const step = delta / Math.max(window.innerHeight * 0.85, 1);
+    if (!setIntroProgress(introProgress + step)) return false;
     return !introComplete;
   };
 
   const getTouchY = (event) => event.touches?.[0]?.clientY ?? event.changedTouches?.[0]?.clientY ?? touchStartY;
 
   introVideo.addEventListener("loadedmetadata", () => {
+    introReady = true;
     introVideo.pause();
     setIntroProgress(0);
     releaseTimer = window.setTimeout(releaseIntro, 8000);
   });
+
+  window.setTimeout(() => {
+    if (!introReady) {
+      releaseIntro();
+    }
+  }, 2500);
 
   window.addEventListener("wheel", (event) => {
     if (advanceIntro(event.deltaY)) {
