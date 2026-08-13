@@ -26,6 +26,7 @@ let introAutoPlayTimer = 0;
 let introAutoPlayFrame = 0;
 let introAutoPlayStartedAt = 0;
 let introVideoReady = false;
+let introReleaseTimer = 0;
 const isTouchIntroMode = window.matchMedia?.("(pointer: coarse)")?.matches || navigator.maxTouchPoints > 0;
 
 function setMusicState(isPlaying) {
@@ -156,6 +157,9 @@ function setIntroVideoProgress(progress) {
 }
 
 function completeIntroVideo() {
+  window.clearTimeout(introReleaseTimer);
+  introReleaseTimer = 0;
+  document.body.classList.remove("intro-playing");
   setIntroVideoProgress(1);
 }
 
@@ -210,7 +214,7 @@ function advanceIntroVideo(delta) {
 
   if (isTouchIntroMode) {
     playIntroVideoSmooth();
-    return !isIntroComplete;
+    return false;
   }
 
   stopIntroAutoPlay();
@@ -228,6 +232,7 @@ function initializeIntroVideo() {
   introVideoReady = true;
   if (isTouchIntroMode) {
     introVideo.currentTime = 0;
+    introReleaseTimer = window.setTimeout(completeIntroVideo, 5200);
   } else {
     introVideo.pause();
     setIntroVideoProgress(0);
@@ -245,9 +250,7 @@ async function playIntroVideoSmooth() {
   try {
     await introVideo.play();
   } catch {
-    if (!introAutoPlayFrame) {
-      introAutoPlayFrame = requestAnimationFrame(runIntroAutoPlay);
-    }
+    window.setTimeout(completeIntroVideo, 600);
   }
 }
 
