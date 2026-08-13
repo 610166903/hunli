@@ -4,16 +4,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>婚礼邀请函</title>
-    <link rel="stylesheet" href="styles.css?v=20260813-mobile-compressed">
+    <link rel="stylesheet" href="styles.css?v=20260813-assets-lite">
   </head>
   <body>
     <button class="music-toggle" type="button" aria-label="播放音乐" aria-pressed="false">
       <span class="music-icon">♪</span>
     </button>
-    <audio id="bgMusic" src="music.wav" loop preload="auto"></audio>
+    <audio id="bgMusic" src="music.m4a" loop preload="metadata"></audio>
     <main class="page">
       <div class="image-wrap">
-        <img class="invitation" src="invitation.jpg" alt="婚礼邀请函">
+        <img class="invitation" src="invitation-optimized.jpg" alt="婚礼邀请函" fetchpriority="high">
         <video
           class="intro-video"
           src="layer-5-mobile.mp4"
@@ -28,7 +28,7 @@
         <section class="album-slider" aria-label="左右滑动查看相册">
           <div class="album-track">
             <div class="album-art">
-              <img class="album-strip" src="album-strip.png" alt="相册照片框">
+              <img class="album-strip" src="album-strip-optimized.jpg" alt="相册照片框" loading="lazy" decoding="async">
               <button class="album-photo-hit album-photo-hit-1" type="button" data-photo-index="0" aria-label="放大查看第1张照片"></button>
               <button class="album-photo-hit album-photo-hit-2" type="button" data-photo-index="1" aria-label="放大查看第2张照片"></button>
               <button class="album-photo-hit album-photo-hit-3" type="button" data-photo-index="2" aria-label="放大查看第3张照片"></button>
@@ -52,9 +52,9 @@
     <div class="photo-lightbox" aria-hidden="true" role="dialog" aria-label="照片预览">
       <button class="lightbox-close" type="button" aria-label="关闭照片预览">×</button>
       <button class="lightbox-nav lightbox-prev" type="button" aria-label="上一张照片">‹</button>
-      <img class="lightbox-image" src="gallery-1.jpg" alt="相册照片预览">
+      <img class="lightbox-image" src="gallery-1-optimized.jpg" alt="相册照片预览" loading="lazy" decoding="async">
       <button class="lightbox-nav lightbox-next" type="button" aria-label="下一张照片">›</button>
     </div>
-    <script src="app.js?v=20260813-mobile-compressed"></script>
+    <script src="app.js?v=20260813-assets-lite"></script>
   </body>
 </html>
