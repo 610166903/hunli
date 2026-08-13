@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>婚礼邀请函</title>
+    <link rel="stylesheet" href="styles.css?v=20260812-phone-hotspot">
+  </head>
+  <body>
+    <button class="music-toggle" type="button" aria-label="播放音乐" aria-pressed="false">
+      <span class="music-icon">♪</span>
+    </button>
+    <audio id="bgMusic" src="music.wav" loop preload="auto"></audio>
+    <main class="page">
+      <div class="image-wrap">
+        <img class="invitation" src="invitation.jpg" alt="婚礼邀请函">
+        <video
+          class="intro-video"
+          src="layer-5-bg-match.mp4"
+          muted
+          playsinline
+          preload="auto"
+          aria-label="婚礼邀请函开场动画"
+        ></video>
+        <section class="album-slider" aria-label="左右滑动查看相册">
+          <div class="album-track">
+            <div class="album-art">
+              <img class="album-strip" src="album-strip.png" alt="相册照片框">
+              <button class="album-photo-hit album-photo-hit-1" type="button" data-photo-index="0" aria-label="放大查看第1张照片"></button>
+              <button class="album-photo-hit album-photo-hit-2" type="button" data-photo-index="1" aria-label="放大查看第2张照片"></button>
+              <button class="album-photo-hit album-photo-hit-3" type="button" data-photo-index="2" aria-label="放大查看第3张照片"></button>
+              <button class="album-photo-hit album-photo-hit-4" type="button" data-photo-index="3" aria-label="放大查看第4张照片"></button>
+              <button class="album-photo-hit album-photo-hit-5" type="button" data-photo-index="4" aria-label="放大查看第5张照片"></button>
+              <button class="album-photo-hit album-photo-hit-6" type="button" data-photo-index="5" aria-label="放大查看第6张照片"></button>
+            </div>
+          </div>
+        </section>
+        <a
+          class="map-hotspot"
+          href="https://map.baidu.com/poi/%E4%B8%8A%E6%B5%B7%E5%B8%82%E5%B4%87%E6%98%8E%E5%8C%BA%E7%AB%96%E6%96%B0%E9%95%87%E6%83%A0%E4%B8%9C%E8%B7%AF/@13537496,3684015,17z?querytype=share&poiShareId=p839a720c7c1c1aa5cb09f5eb65&da_src=shareurl"
+          target="_blank"
+          rel="noopener"
+          aria-label="打开百度地图导航地址"
+        ></a>
+        <a class="phone-hotspot bride-phone" href="tel:16621173283" aria-label="拨打新娘联系电话"></a>
+        <a class="phone-hotspot groom-phone" href="tel:18016028382" aria-label="拨打新郎联系电话"></a>
+      </div>
+    </main>
+    <div class="photo-lightbox" aria-hidden="true" role="dialog" aria-label="照片预览">
+      <button class="lightbox-close" type="button" aria-label="关闭照片预览">×</button>
+      <button class="lightbox-nav lightbox-prev" type="button" aria-label="上一张照片">‹</button>
+      <img class="lightbox-image" src="gallery-1.jpg" alt="相册照片预览">
+      <button class="lightbox-nav lightbox-next" type="button" aria-label="下一张照片">›</button>
+    </div>
+    <script src="app.js?v=20260812-phone-hotspot"></script>
+  </body>
+</html>
