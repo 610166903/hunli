@@ -259,10 +259,11 @@ body.intro-complete .intro-scrub-layer {
   display: grid;
   place-items: center;
   padding: 0;
-  border: 0;
+  border: 1px solid rgba(255, 248, 239, .42);
   border-radius: 50%;
   color: #fff;
-  background: rgba(125, 57, 39, .88);
+  background: rgba(125, 57, 39, .72);
+  box-shadow: 0 8px 24px rgba(34, 18, 12, .22);
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
@@ -278,19 +279,20 @@ body.intro-complete .intro-scrub-layer {
 
 .lightbox-nav {
   top: 50%;
-  width: 64px;
-  height: 64px;
-  font-size: 36px;
+  width: 42px;
+  height: 42px;
+  font-size: 31px;
+  line-height: 1;
   transform: translateY(-50%);
   touch-action: manipulation;
 }
 
 .lightbox-prev {
-  left: max(10px, calc((100vw - 430px) / 2 + 10px));
+  left: max(12px, calc((100vw - 430px) / 2 + 12px));
 }
 
 .lightbox-next {
-  right: max(10px, calc((100vw - 430px) / 2 + 10px));
+  right: max(12px, calc((100vw - 430px) / 2 + 12px));
 }
 
 @keyframes spin {
