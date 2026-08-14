@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>婚礼邀请函</title>
     <link rel="preload" href="layer-6-mobile.mp4" as="video" type="video/mp4">
+    <link rel="preload" href="door-final.gif" as="image">
+    <link rel="preload" href="ring-animation.gif" as="image">
     <link rel="preload" href="music-trim3.m4a" as="audio" type="audio/mp4">
-    <link rel="stylesheet" href="styles.css?v=20260814-music-trim3-v1">
+    <link rel="stylesheet" href="styles.css?v=20260814-door-gif-v3">
   </head>
   <body>
     <button class="music-toggle" type="button" aria-label="播放音乐" aria-pressed="false">
@@ -15,7 +17,7 @@
     <audio id="bgMusic" src="music-trim3.m4a" loop preload="auto" autoplay></audio>
     <main class="page">
       <div class="image-wrap">
-        <img class="invitation" src="invitation-optimized.jpg" alt="婚礼邀请函" fetchpriority="high">
+        <img class="invitation" src="invitation-8-14.jpg" alt="婚礼邀请函" fetchpriority="high">
         <video
           class="intro-video"
           src="layer-6-mobile.mp4"
@@ -33,6 +35,20 @@
         >
           <source src="layer-6-mobile.mp4" type="video/mp4">
         </video>
+        <img
+          class="ring-gif"
+          src="ring-animation.gif"
+          alt="戒指动画"
+          loading="eager"
+          decoding="async"
+        >
+        <img
+          class="door-gif"
+          src="door-final.gif"
+          alt="婚礼仪式动画"
+          loading="eager"
+          decoding="async"
+        >
         <section class="album-slider" aria-label="左右滑动查看相册">
           <div class="album-track">
             <div class="album-art">
@@ -70,6 +86,6 @@
       <img class="lightbox-image" src="gallery-1-optimized.jpg" alt="相册照片预览" loading="lazy" decoding="async">
       <button class="lightbox-nav lightbox-next" type="button" aria-label="下一张照片">›</button>
     </div>
-    <script src="app.js?v=20260814-music-trim3-v1"></script>
+    <script src="app.js?v=20260814-door-gif-v3"></script>
   </body>
 </html>

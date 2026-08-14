@@ -45,6 +45,38 @@ body.lightbox-open {
   pointer-events: none;
 }
 
+.ring-gif {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 25.05%;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 834 / 469;
+  background: #f8f1e6;
+  object-fit: contain;
+  object-position: center center;
+  pointer-events: none;
+  transform: translateY(90px);
+}
+
+.door-gif {
+  position: absolute;
+  z-index: 3;
+  left: 0;
+  top: 56.3%;
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 834 / 576;
+  background: #f8f1e6;
+  object-fit: contain;
+  object-position: center center;
+  clip-path: inset(0 2px 0 0);
+  pointer-events: none;
+}
+
 .album-slider {
   position: absolute;
   z-index: 4;
@@ -151,7 +183,7 @@ body.lightbox-open {
   position: absolute;
   z-index: 5;
   display: block;
-  top: 73.15%;
+  top: 73.6%;
   width: 24.5%;
   height: 1.35%;
   border-radius: 999px;
@@ -161,11 +193,11 @@ body.lightbox-open {
 }
 
 .map-hotspot-baidu {
-  left: 23.1%;
+  left: 23.3%;
 }
 
 .map-hotspot-amap {
-  left: 51.8%;
+  left: 52%;
 }
 
 .phone-hotspot {
