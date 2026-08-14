@@ -45,38 +45,6 @@ body.lightbox-open {
   pointer-events: none;
 }
 
-.intro-scrub-layer {
-  position: absolute;
-  z-index: 6;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100vh;
-  pointer-events: auto;
-  touch-action: none;
-}
-
-body.intro-complete .intro-scrub-layer {
-  pointer-events: none;
-  touch-action: auto;
-}
-
-.scroll-hint {
-  position: absolute;
-  z-index: 5;
-  left: 50%;
-  top: calc(23.35% - 139px);
-  display: block;
-  width: min(12.67%, 56px);
-  height: auto;
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-
-body.intro-complete .scroll-hint {
-  display: none;
-}
-
 .album-slider {
   position: absolute;
   z-index: 4;
