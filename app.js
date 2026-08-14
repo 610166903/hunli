@@ -135,13 +135,23 @@ document.addEventListener("keydown", (event) => {
 });
 
 if (introVideo) {
+  introVideo.setAttribute("muted", "");
+  introVideo.setAttribute("playsinline", "");
+  introVideo.setAttribute("webkit-playsinline", "");
+  introVideo.setAttribute("x5-playsinline", "");
   introVideo.muted = true;
+  introVideo.defaultMuted = true;
   introVideo.playsInline = true;
   introVideo.autoplay = true;
   introVideo.loop = false;
   introVideo.playbackRate = 1;
 
   const playIntroVideo = () => {
+    introVideo.muted = true;
+    introVideo.defaultMuted = true;
+    if (introVideo.ended && Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
+      introVideo.currentTime = 0;
+    }
     const playPromise = introVideo.play();
     if (playPromise?.catch) playPromise.catch(() => {});
   };
@@ -153,7 +163,13 @@ if (introVideo) {
     introVideo.pause();
   });
 
+  introVideo.addEventListener("canplay", playIntroVideo);
   introVideo.addEventListener("loadeddata", playIntroVideo);
+  document.addEventListener("DOMContentLoaded", playIntroVideo);
   window.addEventListener("pageshow", playIntroVideo);
+  window.addEventListener("load", playIntroVideo);
+  window.addEventListener("touchstart", playIntroVideo, { once: true, passive: true });
+  window.addEventListener("pointerdown", playIntroVideo, { once: true });
   window.setTimeout(playIntroVideo, 120);
+  window.setTimeout(playIntroVideo, 800);
 }
