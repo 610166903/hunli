@@ -75,6 +75,7 @@ body.lightbox-open {
   object-position: center center;
   clip-path: inset(0 2px 0 0);
   pointer-events: none;
+  transform: translateY(-20px);
 }
 
 .album-slider {
