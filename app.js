@@ -8,7 +8,6 @@ const lightboxClose = document.querySelector(".lightbox-close");
 const lightboxPrev = document.querySelector(".lightbox-prev");
 const lightboxNext = document.querySelector(".lightbox-next");
 const introVideo = document.querySelector(".intro-video");
-const introScrubLayer = document.querySelector(".intro-scrub-layer");
 const galleryImages = [
   "gallery-1-optimized.jpg",
   "gallery-2-optimized.jpg",
@@ -136,141 +135,25 @@ document.addEventListener("keydown", (event) => {
 });
 
 if (introVideo) {
-  let introProgress = 0;
-  let introComplete = false;
-  let introReady = false;
-  let touchStartY = 0;
-  let pendingDelta = 0;
-
   introVideo.muted = true;
   introVideo.playsInline = true;
-  introVideo.autoplay = false;
+  introVideo.autoplay = true;
   introVideo.loop = false;
   introVideo.playbackRate = 1;
 
-  const warmIntroVideo = () => {
+  const playIntroVideo = () => {
     const playPromise = introVideo.play();
-
-    if (playPromise?.then) {
-      playPromise
-        .then(() => {
-          introVideo.pause();
-          if (Number.isFinite(introVideo.duration) && introVideo.duration > 0 && !introReady) {
-            introReady = true;
-            document.body.classList.add("intro-ready");
-            setIntroProgress(Math.max(introProgress, 0.012));
-          }
-        })
-        .catch(() => {});
-    }
+    if (playPromise?.catch) playPromise.catch(() => {});
   };
 
-  const setIntroProgress = (progress) => {
-    if (!Number.isFinite(introVideo.duration) || introVideo.duration <= 0) return false;
-
-    introProgress = Math.min(Math.max(progress, 0), 1);
-    introComplete = introProgress >= 1;
-    document.body.classList.toggle("intro-complete", introComplete);
-    document.body.classList.toggle("intro-ready", introReady);
-
-    const targetTime = introProgress * Math.max(introVideo.duration - 0.04, 0);
-    if (Math.abs(introVideo.currentTime - targetTime) > 0.025) {
-      introVideo.currentTime = targetTime;
-    }
-
-    if (introComplete) {
-      introVideo.pause();
-    }
-
-    return true;
-  };
-
-  const forceReleaseIntro = () => {
-    introReady = true;
-    introComplete = true;
-    document.body.classList.add("intro-ready");
-    document.body.classList.add("intro-complete");
-
+  introVideo.addEventListener("ended", () => {
     if (Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
       introVideo.currentTime = Math.max(introVideo.duration - 0.04, 0);
     }
     introVideo.pause();
-  };
-
-  const advanceIntro = (delta) => {
-    if (!introReady) {
-      pendingDelta += delta;
-      return true;
-    }
-    if (window.scrollY > 2) return false;
-    if (introComplete && delta > 0) return false;
-    if (delta < 0 && introProgress <= 0) return false;
-
-    const step = delta / Math.max(window.innerHeight * 0.85, 1);
-    if (!setIntroProgress(introProgress + step)) return false;
-    return !introComplete;
-  };
-
-  const getTouchY = (event) => event.touches?.[0]?.clientY ?? event.changedTouches?.[0]?.clientY ?? touchStartY;
-
-  introVideo.addEventListener("loadedmetadata", () => {
-    introReady = true;
-    document.body.classList.add("intro-ready");
-    introVideo.pause();
-    setIntroProgress(0.012);
-
-    if (pendingDelta > 0) {
-      advanceIntro(pendingDelta);
-    }
-    pendingDelta = 0;
   });
 
-  introVideo.addEventListener("loadeddata", () => {
-    if (!introReady && Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
-      introReady = true;
-      document.body.classList.add("intro-ready");
-      setIntroProgress(0.012);
-    }
-  });
-
-  introVideo.addEventListener("error", forceReleaseIntro);
-
-  window.addEventListener("wheel", (event) => {
-    if (advanceIntro(event.deltaY)) {
-      event.preventDefault();
-    }
-  }, { passive: false });
-
-  introScrubLayer?.addEventListener("touchstart", (event) => {
-    touchStartY = getTouchY(event);
-    warmIntroVideo();
-  }, { passive: true });
-
-  introScrubLayer?.addEventListener("touchmove", (event) => {
-    const currentY = getTouchY(event);
-    const delta = touchStartY - currentY;
-
-    if (advanceIntro(delta)) {
-      event.preventDefault();
-      touchStartY = currentY;
-    }
-  }, { passive: false });
-
-  window.addEventListener("touchstart", (event) => {
-    touchStartY = getTouchY(event);
-    warmIntroVideo();
-  }, { passive: true });
-
-  window.addEventListener("touchmove", (event) => {
-    const currentY = getTouchY(event);
-    const delta = touchStartY - currentY;
-
-    if (window.scrollY <= 1 && delta < 0 && advanceIntro(delta)) {
-      event.preventDefault();
-      touchStartY = currentY;
-    }
-  }, { passive: false });
-
-  introVideo.load();
-  window.setTimeout(warmIntroVideo, 120);
+  introVideo.addEventListener("loadeddata", playIntroVideo);
+  window.addEventListener("pageshow", playIntroVideo);
+  window.setTimeout(playIntroVideo, 120);
 }
