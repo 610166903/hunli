@@ -17,6 +17,8 @@ const galleryImages = [
   "gallery-6-optimized.jpg",
 ];
 let currentPhotoIndex = 0;
+let mediaRetryTimer = 0;
+let mediaRetryCount = 0;
 
 function setMusicState(isPlaying) {
   toggle.classList.toggle("is-playing", isPlaying);
@@ -24,13 +26,54 @@ function setMusicState(isPlaying) {
   toggle.setAttribute("aria-label", isPlaying ? "暂停音乐" : "播放音乐");
 }
 
+function playIntroVideo() {
+  if (!introVideo) return;
+
+  introVideo.setAttribute("muted", "");
+  introVideo.setAttribute("playsinline", "");
+  introVideo.setAttribute("webkit-playsinline", "");
+  introVideo.setAttribute("x5-playsinline", "");
+  introVideo.muted = true;
+  introVideo.defaultMuted = true;
+  introVideo.playsInline = true;
+  introVideo.autoplay = true;
+  introVideo.loop = false;
+  introVideo.playbackRate = 1;
+
+  if (introVideo.ended) return;
+
+  const playPromise = introVideo.play();
+  if (playPromise?.catch) playPromise.catch(() => {});
+}
+
 async function playMusic() {
   try {
+    music.autoplay = true;
+    music.preload = "auto";
     await music.play();
     setMusicState(true);
   } catch {
     setMusicState(false);
   }
+}
+
+function playAllMedia() {
+  playIntroVideo();
+  playMusic();
+}
+
+function startMediaRetries() {
+  if (mediaRetryTimer) return;
+
+  mediaRetryTimer = window.setInterval(() => {
+    mediaRetryCount += 1;
+    playAllMedia();
+
+    if (mediaRetryCount >= 12) {
+      window.clearInterval(mediaRetryTimer);
+      mediaRetryTimer = 0;
+    }
+  }, 350);
 }
 
 function pauseMusic() {
@@ -49,24 +92,33 @@ toggle.addEventListener("click", () => {
 const startOnFirstGesture = (event) => {
   if (event.target?.closest?.(".music-toggle")) return;
 
-  playMusic();
+  playAllMedia();
   window.removeEventListener("pointerdown", startOnFirstGesture);
   window.removeEventListener("touchstart", startOnFirstGesture);
+  window.removeEventListener("touchend", startOnFirstGesture);
   window.removeEventListener("scroll", startOnFirstGesture);
 };
 
 window.addEventListener("pointerdown", startOnFirstGesture, { once: true });
 window.addEventListener("touchstart", startOnFirstGesture, { once: true });
+window.addEventListener("touchend", startOnFirstGesture, { once: true });
 window.addEventListener("scroll", startOnFirstGesture, { once: true });
-window.addEventListener("load", playMusic);
-window.addEventListener("pageshow", playMusic);
-document.addEventListener("WeixinJSBridgeReady", playMusic);
+window.addEventListener("load", playAllMedia);
+window.addEventListener("pageshow", playAllMedia);
+document.addEventListener("DOMContentLoaded", playAllMedia);
+document.addEventListener("WeixinJSBridgeReady", () => {
+  if (window.WeixinJSBridge?.invoke) {
+    window.WeixinJSBridge.invoke("getNetworkType", {}, playAllMedia);
+  }
+  playAllMedia();
+});
 document.addEventListener("visibilitychange", () => {
   if (!document.hidden) {
-    playMusic();
+    playAllMedia();
   }
 });
-playMusic();
+playAllMedia();
+startMediaRetries();
 
 mapHotspots.forEach((hotspot) => {
   hotspot.addEventListener("click", (event) => {
@@ -135,27 +187,6 @@ document.addEventListener("keydown", (event) => {
 });
 
 if (introVideo) {
-  introVideo.setAttribute("muted", "");
-  introVideo.setAttribute("playsinline", "");
-  introVideo.setAttribute("webkit-playsinline", "");
-  introVideo.setAttribute("x5-playsinline", "");
-  introVideo.muted = true;
-  introVideo.defaultMuted = true;
-  introVideo.playsInline = true;
-  introVideo.autoplay = true;
-  introVideo.loop = false;
-  introVideo.playbackRate = 1;
-
-  const playIntroVideo = () => {
-    introVideo.muted = true;
-    introVideo.defaultMuted = true;
-    if (introVideo.ended && Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
-      introVideo.currentTime = 0;
-    }
-    const playPromise = introVideo.play();
-    if (playPromise?.catch) playPromise.catch(() => {});
-  };
-
   introVideo.addEventListener("ended", () => {
     if (Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
       introVideo.currentTime = Math.max(introVideo.duration - 0.04, 0);
@@ -165,11 +196,4 @@ if (introVideo) {
 
   introVideo.addEventListener("canplay", playIntroVideo);
   introVideo.addEventListener("loadeddata", playIntroVideo);
-  document.addEventListener("DOMContentLoaded", playIntroVideo);
-  window.addEventListener("pageshow", playIntroVideo);
-  window.addEventListener("load", playIntroVideo);
-  window.addEventListener("touchstart", playIntroVideo, { once: true, passive: true });
-  window.addEventListener("pointerdown", playIntroVideo, { once: true });
-  window.setTimeout(playIntroVideo, 120);
-  window.setTimeout(playIntroVideo, 800);
 }
