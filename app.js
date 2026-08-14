@@ -8,6 +8,7 @@ const lightboxClose = document.querySelector(".lightbox-close");
 const lightboxPrev = document.querySelector(".lightbox-prev");
 const lightboxNext = document.querySelector(".lightbox-next");
 const introVideo = document.querySelector(".intro-video");
+const introScrubLayer = document.querySelector(".intro-scrub-layer");
 const galleryImages = [
   "gallery-1-optimized.jpg",
   "gallery-2-optimized.jpg",
@@ -135,25 +136,89 @@ document.addEventListener("keydown", (event) => {
 });
 
 if (introVideo) {
+  let introProgress = 0;
+  let introComplete = false;
+  let touchStartY = 0;
+  let releaseTimer = 0;
+
   introVideo.muted = true;
   introVideo.playsInline = true;
-  introVideo.autoplay = true;
+  introVideo.autoplay = false;
   introVideo.loop = false;
   introVideo.playbackRate = 1;
 
-  const playIntroVideo = () => {
-    const playPromise = introVideo.play();
-    if (playPromise?.catch) playPromise.catch(() => {});
+  const setIntroProgress = (progress) => {
+    if (!Number.isFinite(introVideo.duration) || introVideo.duration <= 0) return;
+
+    introProgress = Math.min(Math.max(progress, 0), 1);
+    introComplete = introProgress >= 1;
+    document.body.classList.toggle("intro-complete", introComplete);
+
+    const targetTime = introProgress * Math.max(introVideo.duration - 0.04, 0);
+    if (Math.abs(introVideo.currentTime - targetTime) > 0.025) {
+      introVideo.currentTime = targetTime;
+    }
+
+    if (introComplete) {
+      window.clearTimeout(releaseTimer);
+      introVideo.pause();
+    }
   };
 
-  introVideo.addEventListener("ended", () => {
-    if (Number.isFinite(introVideo.duration) && introVideo.duration > 0) {
-      introVideo.currentTime = Math.max(introVideo.duration - 0.04, 0);
-    }
+  const releaseIntro = () => {
+    setIntroProgress(1);
+  };
+
+  const advanceIntro = (delta) => {
+    if (introComplete || window.scrollY > 2) return false;
+    if (delta < 0 && introProgress <= 0) return true;
+
+    const step = delta / Math.max(window.innerHeight * 1.45, 1);
+    setIntroProgress(introProgress + step);
+    return !introComplete;
+  };
+
+  const getTouchY = (event) => event.touches?.[0]?.clientY ?? event.changedTouches?.[0]?.clientY ?? touchStartY;
+
+  introVideo.addEventListener("loadedmetadata", () => {
     introVideo.pause();
+    setIntroProgress(0);
+    releaseTimer = window.setTimeout(releaseIntro, 8000);
   });
 
-  introVideo.addEventListener("loadeddata", playIntroVideo);
-  window.addEventListener("pageshow", playIntroVideo);
-  window.setTimeout(playIntroVideo, 120);
+  window.addEventListener("wheel", (event) => {
+    if (advanceIntro(event.deltaY)) {
+      event.preventDefault();
+    }
+  }, { passive: false });
+
+  introScrubLayer?.addEventListener("touchstart", (event) => {
+    touchStartY = getTouchY(event);
+  }, { passive: true });
+
+  introScrubLayer?.addEventListener("touchmove", (event) => {
+    const currentY = getTouchY(event);
+    const delta = touchStartY - currentY;
+
+    if (advanceIntro(delta)) {
+      event.preventDefault();
+      touchStartY = currentY;
+    }
+  }, { passive: false });
+
+  window.addEventListener("touchstart", (event) => {
+    touchStartY = getTouchY(event);
+  }, { passive: true });
+
+  window.addEventListener("touchmove", (event) => {
+    const currentY = getTouchY(event);
+    const delta = touchStartY - currentY;
+
+    if (advanceIntro(delta)) {
+      event.preventDefault();
+      touchStartY = currentY;
+    }
+  }, { passive: false });
+
+  introVideo.load();
 }
