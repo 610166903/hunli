@@ -8,6 +8,7 @@ const lightboxClose = document.querySelector(".lightbox-close");
 const lightboxPrev = document.querySelector(".lightbox-prev");
 const lightboxNext = document.querySelector(".lightbox-next");
 const introVideo = document.querySelector(".intro-video");
+const lazyMedia = Array.from(document.querySelectorAll(".lazy-media"));
 const galleryImages = [
   "gallery-1-optimized.jpg",
   "gallery-2-optimized.jpg",
@@ -19,6 +20,41 @@ const galleryImages = [
 let currentPhotoIndex = 0;
 let mediaRetryTimer = 0;
 let mediaRetryCount = 0;
+
+function loadLazyElement(element) {
+  if (!element || element.dataset.loaded === "true") return;
+
+  const source = element.dataset.src;
+  if (!source) return;
+
+  element.src = source;
+  element.dataset.loaded = "true";
+}
+
+function initLazyMedia() {
+  if (!lazyMedia.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    lazyMedia.forEach(loadLazyElement);
+    return;
+  }
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        loadLazyElement(entry.target);
+        observer.unobserve(entry.target);
+      });
+    },
+    {
+      rootMargin: "900px 0px",
+      threshold: 0.01,
+    },
+  );
+
+  lazyMedia.forEach((element) => observer.observe(element));
+}
 
 function setMusicState(isPlaying) {
   toggle.classList.toggle("is-playing", isPlaying);
@@ -106,6 +142,7 @@ window.addEventListener("scroll", startOnFirstGesture, { once: true });
 window.addEventListener("load", playAllMedia);
 window.addEventListener("pageshow", playAllMedia);
 document.addEventListener("DOMContentLoaded", playAllMedia);
+document.addEventListener("DOMContentLoaded", initLazyMedia);
 document.addEventListener("WeixinJSBridgeReady", () => {
   if (window.WeixinJSBridge?.invoke) {
     window.WeixinJSBridge.invoke("getNetworkType", {}, playAllMedia);
@@ -118,6 +155,7 @@ document.addEventListener("visibilitychange", () => {
   }
 });
 playAllMedia();
+initLazyMedia();
 startMediaRetries();
 
 mapHotspots.forEach((hotspot) => {
