@@ -58,7 +58,7 @@ body.lightbox-open {
   object-fit: contain;
   object-position: center center;
   pointer-events: none;
-  transform: translateY(90px);
+  transform: translateY(65px);
 }
 
 .door-gif {
@@ -92,6 +92,7 @@ body.lightbox-open {
   -webkit-overflow-scrolling: touch;
   touch-action: pan-x;
   scrollbar-width: none;
+  transform: translateY(-25px);
 }
 
 .album-slider::-webkit-scrollbar {
