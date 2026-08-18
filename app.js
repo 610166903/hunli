@@ -1,6 +1,7 @@
 const music = document.querySelector("#bgMusic");
 const toggle = document.querySelector(".music-toggle");
 const mapHotspots = Array.from(document.querySelectorAll(".map-hotspot"));
+const phoneHotspots = Array.from(document.querySelectorAll(".phone-hotspot"));
 const albumButtons = Array.from(document.querySelectorAll(".album-photo-hit"));
 const lightbox = document.querySelector(".photo-lightbox");
 const lightboxImage = document.querySelector(".lightbox-image");
@@ -162,6 +163,23 @@ mapHotspots.forEach((hotspot) => {
   hotspot.addEventListener("click", (event) => {
     event.preventDefault();
     window.location.href = hotspot.href;
+  });
+});
+
+function decodePhone(code) {
+  return code
+    .split(",")
+    .map((value) => String.fromCharCode(Number(value) - 17))
+    .join("");
+}
+
+phoneHotspots.forEach((hotspot) => {
+  hotspot.addEventListener("click", (event) => {
+    event.preventDefault();
+    const phone = decodePhone(hotspot.dataset.phoneCode || "");
+    if (/^\d{11}$/.test(phone)) {
+      window.location.href = `tel:${phone}`;
+    }
   });
 });
 
